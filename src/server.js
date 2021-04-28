@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-//import listEndpoints from "express-list-endpoints";
+import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 
 import articlesRouter from "./services/articles/index.js";
@@ -27,6 +27,8 @@ server.use(badRequestErrorHandler);
 server.use(forbiddenErrorHandler);
 server.use(catchAllErrorHandler);
 server.use(notFoundErrorHandler);
+
+console.log(listEndpoints(server));
 
 mongoose
   .connect(process.env.URL_MONGO, {
