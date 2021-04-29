@@ -7,11 +7,11 @@ import ArticleModel from "./schema.js";
 const articlesRouter = express.Router();
 
 articlesRouter.get("/", async (req, res, next) => {
-  try {
-    //const articles = await ArticleModel.find();
-    //res.send(articles);
+  //try {
+  //const articles = await ArticleModel.find();
+  //res.send(articles);
 
-    const query = q2m(req.query);
+  /* const query = q2m(req.query);
     console.log(query);
     const totalArticles = await ArticleModel.countDocuments(query.criteria);
     console.log(totalArticles);
@@ -27,15 +27,29 @@ articlesRouter.get("/", async (req, res, next) => {
   } catch (error) {
     console.log(error);
     next(error);
+  } */
+
+  try {
+    const query = q2m(req.query);
+    const { articles, total } = await ArticleModel.findArticlesWithAuthors(
+      query
+    );
+    res.send({ links: query.links("/articles", total), articles });
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 });
 
 articlesRouter.get("/:id", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const article = await ArticleModel.findById(id);
+    const article = await ArticleModel.findArticleWithAuthors(req.params.id);
     if (article) {
       res.send(article);
+    } else {
+      const error = new Error();
+      error.httpStatusCode = 404;
+      next(error);
     }
   } catch (error) {
     console.log(error);
